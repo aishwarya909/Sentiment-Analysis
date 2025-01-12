@@ -83,3 +83,11 @@ class DataCleaning(BaseEstimator, TransformerMixin):
         except Exception as e:
             print(f"Error in transform method: {e}")
             raise e
+# Function to lemmatize text
+def lemmatize_text(content):
+    try:
+        wordnetlemma = WordNetLemmatizer()
+        return " ".join([wordnetlemma.lemmatize(word) for word in word_tokenize(content)])
+    except Exception as e:
+        print(f"Error during lemmatization: {content}")
+        raise e
