@@ -152,3 +152,18 @@ for name, model in models.items():
 
     print(classification_report(y_test, y_pred))
     print("-" * 50)
+
+# Hyperparameter tuning for Random Forest
+param_grid = {
+    "n_estimators": [50, 100, 150],
+    "max_depth": [None, 10, 20],
+    "min_samples_split": [2, 5, 10]
+}
+
+rf_grid_search = GridSearchCV(RandomForestClassifier(random_state=42), param_grid, cv=5, scoring='accuracy')
+rf_grid_search.fit(X_train, y_train)
+print("Best Random Forest Parameters:", rf_grid_search.best_params_)
+
+# Cross-validation
+cv_scores = cross_val_score(RandomForestClassifier(**rf_grid_search.best_params_, random_state=42), X_resampled, y_resampled, cv=5, scoring='accuracy')
+print(f"Cross-Validation Accuracy: {np.mean(cv_scores):.4f}")
