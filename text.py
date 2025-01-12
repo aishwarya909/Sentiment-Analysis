@@ -106,3 +106,12 @@ data['sentiment'] = data['sentiment'].astype('category').cat.codes
 data_cleaner = DataCleaning()
 data['content'] = data_cleaner.fit_transform(data['content'])
 data['content'] = data['content'].apply(lemmatize_text)
+
+# Feature extraction using TF-IDF
+vectorizer = TfidfVectorizer(max_features=2000, ngram_range=(1, 2))
+X = vectorizer.fit_transform(data['content'])
+y = data['sentiment']
+
+# Handle imbalanced data using SMOTE
+smote = SMOTE(random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X, y)
