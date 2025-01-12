@@ -91,3 +91,18 @@ def lemmatize_text(content):
     except Exception as e:
         print(f"Error during lemmatization: {content}")
         raise e
+    
+# Load dataset
+data = pd.read_csv('eng_dataset.csv')
+
+# Handle missing or null values in the 'content' column
+data['content'] = data['content'].fillna('')
+data['content'] = data['content'].astype(str)
+
+# Encode the 'sentiment' column
+data['sentiment'] = data['sentiment'].astype('category').cat.codes
+
+# Apply custom cleaning and lemmatization
+data_cleaner = DataCleaning()
+data['content'] = data_cleaner.fit_transform(data['content'])
+data['content'] = data['content'].apply(lemmatize_text)
