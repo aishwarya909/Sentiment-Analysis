@@ -167,3 +167,17 @@ print("Best Random Forest Parameters:", rf_grid_search.best_params_)
 # Cross-validation
 cv_scores = cross_val_score(RandomForestClassifier(**rf_grid_search.best_params_, random_state=42), X_resampled, y_resampled, cv=5, scoring='accuracy')
 print(f"Cross-Validation Accuracy: {np.mean(cv_scores):.4f}")
+
+# Visualize class distribution
+sns.countplot(x=y_resampled)
+plt.title("Class Distribution After SMOTE")
+plt.show()
+
+# Feature importance visualization for Random Forest
+best_rf = rf_grid_search.best_estimator_
+feature_importances = best_rf.feature_importances_
+sorted_idx = np.argsort(feature_importances)[-10:]
+plt.barh(range(len(sorted_idx)), feature_importances[sorted_idx])
+plt.yticks(range(len(sorted_idx)), [vectorizer.get_feature_names_out()[i] for i in sorted_idx])
+plt.title("Top 10 Feature Importances")
+plt.show()
