@@ -119,3 +119,36 @@ X_resampled, y_resampled = smote.fit_resample(X, y)
 # Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42)
 
+# Define multiple models
+models = {
+    "Random Forest": RandomForestClassifier(random_state=42),
+    "Logistic Regression": LogisticRegression(max_iter=500, random_state=42),
+    "SVM": SVC(probability=True, random_state=42),
+    "Gradient Boosting": GradientBoostingClassifier(random_state=42)
+}
+
+# Train and evaluate models
+for name, model in models.items():
+    print(f"Training {name}...")
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    if hasattr(model, "predict_proba"):
+        y_proba = model.predict_proba(X_test)[:, 1]
+    else:
+        y_proba = None
+
+    print(f"Model: {name}")
+    print(f"Accuracy: {accuracy_score(y_test, y_pred):.4f}")
+
+    if y_proba is not None:
+        try:
+            if len(np.unique(y_test)) > 2:
+                print(f"ROC-AUC: {roc_auc_score(y_test, model.predict_proba(X_test), multi_class='ovr'):.4f}")
+            else:
+                print(f"ROC-AUC: {roc_auc_score(y_test, y_proba):.4f}")
+        except Exception as e:
+            print(f"Error calculating ROC-AUC: {e}")
+
+    print(classification_report(y_test, y_pred))
+    print("-" * 50)
